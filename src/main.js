@@ -1,4 +1,4 @@
-// Treko Sticky v10.4 — single build untuk semua artist, view only.
+// Treko Sticky v10.5 — single build untuk semua artist, view only.
 // Dark theme sama seperti dashboard Treko (dark), flag Since/Day/Miss
 // per task dari push (aturan hari tertutup yang sama seperti dashboard:
 // miss baru valid setelah collect sore / hari lewat), footer disederhanakan
@@ -11,6 +11,13 @@
 // v10.4: emoji status di depan nama task (12 Nov 2026, Bayu): 🕐 pending,
 // ⭐ progres melebihi target, 👍 selesai tepat waktu, ⚠️ masih jalan tapi
 // sudah miss. Tanpa emoji = masih jalan, belum selesai dan belum miss.
+// v10.5: tombol "Cek Update" (↓) di titlebar — update langsung tanpa
+// signing key (keputusan Bayu 12 Nov 2026, "tool simple gini").
+// App cek GitHub Releases terbaru (api.github.com), kalau ada versi baru
+// download installer .exe (NSIS) ke cache, jalankan, lalu tutup app.
+// TIDAK ada verifikasi signature (tanpa signing key) — update hanya dari
+// repo publik halobayu/treko-sticky; installer tetap unsigned jadi
+// SmartScreen Windows akan muncul seperti install manual.
 // Pindah tab tidak fetch ulang: datanya sudah ikut di payload.
 // Cara pakai baru (usulan Bayu 3 Nov 12:38 WIB, menggantikan 1 zip per artist):
 // lead DM-kan Data URL per artist, artist tempel URL itu di app sekali saja,
@@ -27,6 +34,8 @@
 const DATA_BASE = "https://gambirstudio.com/treko/data.php?username=";
 const URL_KEY = "treko_data_url";
 const CACHE_KEY = "treko_last_data";
+const RELEASES_API = "https://api.github.com/repos/halobayu/treko-sticky/releases/latest";
+const RELEASES_PAGE = "https://github.com/halobayu/treko-sticky/releases";
 
 function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -195,6 +204,100 @@ function renderWeek(data) {
   body.innerHTML = html;
 }
 
+// ---- Auto-update (v10.5, tanpa signing key) ----
+// Alur: cek GitHub Releases terbaru → bandingkan versi → kalau ada yang
+// baru, download installer .exe (NSIS) ke cache app → jalankan → tutup app.
+// Installer unsigned: SmartScreen Windows muncul seperti install manual.
+// Kalau API plugin Tauri tidak tersedia (mode web / build lama), fallback:
+// buka halaman Releases di browser supaya artist download manual.
+// Versi app dibaca dari Tauri (tauri.conf.json); tag GitHub "v10.6"
+// dinormalisasi jadi "10.6" lalu dibandingkan sebagai semver.
+function cmpVer(a, b) {
+  const pa = String(a || "0").split(".").map(n => parseInt(n, 10) || 0);
+  const pb = String(b || "0").split(".").map(n => parseInt(n, 10) || 0);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const d = (pa[i] || 0) - (pb[i] || 0);
+    if (d) return d;
+  }
+  return 0;
+}
+
+function setUpdateStatus(msg) {
+  const foot = document.getElementById("foot");
+  if (foot) foot.textContent = msg;
+}
+
+async function getCurrentVersion() {
+  try {
+    const app = window.__TAURI__ && window.__TAURI__.app;
+    if (app && app.getVersion) return await app.getVersion();
+  } catch (e) {}
+  return "0.1.0";
+}
+
+async function checkForUpdate() {
+  const btn = document.getElementById("btn-update");
+  btn.disabled = true;
+  btn.classList.add("spinning");
+  setUpdateStatus("Mengecek update…");
+  try {
+    const current = await getCurrentVersion();
+    const res = await fetch(RELEASES_API, { cache: "no-store" });
+    if (!res.ok) throw new Error("GitHub tidak ok: " + res.status);
+    const rel = await res.json();
+    const latestTag = String(rel.tag_name || "");
+    const latest = latestTag.replace(/^v/i, "");
+    if (!latest || cmpVer(latest, current) <= 0) {
+      setUpdateStatus(`Sudah versi terbaru (v${current})`);
+      return;
+    }
+    // Cari installer NSIS .exe di asset release terbaru.
+    const exe = (rel.assets || []).find(a => /\.exe$/i.test(a.name || ""));
+    if (!exe || !exe.browser_download_url) throw new Error("installer .exe tidak ditemukan di release");
+    setUpdateStatus(`Update v${latest} ditemukan, mengunduh…`);
+    // Download installer sebagai bytes.
+    const dl = await fetch(exe.browser_download_url, { cache: "no-store" });
+    if (!dl.ok) throw new Error("download gagal: " + dl.status);
+    const buf = new Uint8Array(await dl.arrayBuffer());
+    // Tulis ke cache app, lalu jalankan. Butuh plugin fs + opener + process.
+    const T = window.__TAURI__;
+    if (!T || !T.fs || !T.opener || !T.path) throw new Error("plugin update tidak tersedia di build ini");
+    const cacheDir = await T.path.appCacheDir();
+    const fname = exe.name || `treko-sticky-${latest}-setup.exe`;
+    const fullPath = await T.path.join(cacheDir, fname);
+    // writeFile: path absolut + bytes. baseDir tidak perlu kalau path absolut.
+    if (T.fs.writeFile) {
+      await T.fs.writeFile(fullPath, buf);
+    } else if (T.fs.write) {
+      await T.fs.write(fullPath, buf);
+    } else {
+      throw new Error("fs.writeFile tidak tersedia");
+    }
+    setUpdateStatus(`Menginstal v${latest}… app akan tertutup.`);
+    // Jalankan installer, beri jeda supaya proses sempat jalan, lalu tutup app.
+    await T.opener.open(fullPath);
+    setTimeout(async () => {
+      try {
+        if (T.process && T.process.exit) await T.process.exit(0);
+        const w = T.window;
+        if (w && w.getCurrentWindow) await w.getCurrentWindow().close();
+        else window.close();
+      } catch (e) {}
+    }, 1200);
+  } catch (e) {
+    // Gagal apa pun: jangan diam — beri tahu artist + arahkan ke Releases.
+    setUpdateStatus(`Update gagal (${e && e.message ? e.message : e}). Download manual: ${RELEASES_PAGE}`);
+    try {
+      const T = window.__TAURI__;
+      if (T && T.opener && T.opener.open) await T.opener.open(RELEASES_PAGE);
+      else window.open(RELEASES_PAGE, "_blank");
+    } catch (e2) {}
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove("spinning");
+  }
+}
+
 async function load() {
   const btn = document.getElementById("btn-refresh");
   const foot = document.getElementById("foot");
@@ -232,6 +335,7 @@ async function load() {
 }
 
 document.getElementById("btn-refresh").addEventListener("click", load);
+document.getElementById("btn-update").addEventListener("click", checkForUpdate);
 document.getElementById("tab-today").addEventListener("click", () => switchTab("today"));
 document.getElementById("tab-week").addEventListener("click", () => switchTab("week"));
 document.getElementById("btn-settings").addEventListener("click", () => showSetup());
