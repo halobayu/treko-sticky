@@ -1,0 +1,64 @@
+/* Treko Sticky v10 — visual dark sama dengan dashboard Treko (dark theme).
+   Latar #141415, panel #19191b, kartu #232325, teks #ededed / #a1a1a6,
+   bar hijau #4cc38a, miss #e5484d, pending #fbbf24, header per artist
+   tetap color code penuh. View only: tidak ada tombol lead, tidak ada
+   statistik tim, tidak ada kartu artist lain. */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: transparent; font-family: system-ui, Arial, sans-serif; }
+.sticky { width: 100%; margin: 0; padding: 12px; background: #19191b; border: 1px solid rgba(237,237,237,0.08); border-radius: 20px; min-height: 100vh; box-sizing: border-box; }
+.titlebar { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 10px; color: #ededed; user-select: none; }
+.titlebar-title { font-weight: 500; font-size: 15px; }
+.titlebar-actions { display: flex; gap: 6px; }
+.tbtn { width: 28px; height: 28px; border: 1px solid rgba(237,237,237,0.16); border-radius: 8px; background: transparent; color: #a1a1a6; cursor: pointer; font-size: 16px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+.tbtn svg { width: 16px; height: 16px; display: block; }
+.tbtn:disabled { opacity: 0.5; cursor: default; }
+.tbtn.active { background: rgba(237,237,237,0.16); border-color: rgba(237,237,237,0.32); color: #ededed; }
+.tbtn.spinning { animation: spin 0.8s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.tabs { display: flex; gap: 8px; margin: 2px 0 12px; }
+.tabs[hidden] { display: none; }
+.tab { padding: 8px 16px; font-size: 14px; font-weight: 500; color: #a1a1a6; background: transparent; border: 1px solid rgba(237,237,237,0.16); border-radius: 999px; cursor: pointer; }
+.tab.active { color: #171717; background: #ededed; border-color: #ededed; }
+.wgroup { margin: 16px 0 0; }
+.wgroup:first-child { margin-top: 0; }
+.wlabel { color: #85858b; font-size: 12px; font-weight: 500; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+.wline { color: #ededed; font-size: 14px; margin: 6px 0; line-height: 1.4; }
+.wline .wdate { color: #a1a1a6; }
+.wline .wmiss { color: #e5484d; }
+.wline.ok { color: #4cc38a; }
+.wline.ok .wdate { color: #a1a1a6; }
+.wline.warn { color: #fbbf24; }
+.wline.warn .wdate { color: #a1a1a6; }
+.acard { background: #232325; color: #ededed; border: 1px solid rgba(237,237,237,0.08); border-radius: 16px; overflow: hidden; }
+.acard-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 20px; color: #171717; }
+.acard-head h3 { margin: 0; color: #171717; font-size: 28px; line-height: 1; font-weight: 500; }
+.acard-head .taskcount { font-size: 18px; font-weight: 500; color: #171717; white-space: nowrap; }
+.acard-body { padding: 16px; max-height: min(560px, calc(100vh - 190px)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: #3a3a3e transparent; }
+.acard-body::-webkit-scrollbar { width: 8px; }
+.acard-body::-webkit-scrollbar-thumb { background: #3a3a3e; border-radius: 8px; }
+.tstamp-pill { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: #85858b; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; border-radius: 999px; padding: 4px 10px; font-size: 13px; font-weight: 500; margin: 12px 0 8px; }
+.acard-body > .tstamp-pill:first-child { margin-top: 0; }
+.taskcard { border: 1px solid rgba(237,237,237,0.08); border-radius: 14px; padding: 16px; margin-bottom: 16px; background: #19191b; }
+.taskcard:last-child { margin-bottom: 0; }
+.taskcard .tname { color: #ededed; font-size: 18px; font-weight: 500; margin: 0; line-height: 1.3; }
+.taskcard .tprog { color: #ededed; font-size: 32px; font-weight: 500; line-height: 1; margin: 12px 0 8px; font-variant-numeric: tabular-nums; }
+.barrow { display: flex; align-items: center; gap: 12px; margin: 8px 0; min-width: 0; }
+.bar { flex: 1 1 auto; min-width: 0; height: 8px; background: #232325; border-radius: 4px; overflow: hidden; position: relative; }
+.bar-prog { position: absolute; left: 0; top: 0; bottom: 0; background: #4cc38a; border-radius: 4px 0 0 4px; }
+.bar-gap { position: absolute; top: 0; bottom: 0; background: #3a3a3e; border-radius: 0; }
+.targetpct { font-size: 20px; font-weight: 500; color: #85858b; min-width: 64px; flex-shrink: 0; white-space: nowrap; text-align: right; line-height: 1; font-variant-numeric: tabular-nums; }
+.flagline { display: flex; gap: 16px; flex-wrap: wrap; color: #a1a1a6; font-size: 13px; margin: 12px 0 0; }
+.flagline .miss { color: #e5484d; }
+.pendingline { color: #fbbf24; font-size: 13px; font-weight: 500; margin: 8px 0 0; }
+.raiseline { color: #4ade80; font-size: 13px; font-weight: 500; margin: 8px 0 0; }
+.meta { color: #a1a1a6; font-size: 14px; margin: 8px 0; }
+.foot { color: #a1a1a6; font-size: 12px; text-align: center; margin: 12px 0 0; }
+.setup-card { background: #232325; color: #ededed; border: 1px solid rgba(237,237,237,0.08); border-radius: 16px; padding: 20px; }
+.setup-card h3 { margin: 0 0 14px; color: #ededed; font-size: 22px; font-weight: 500; }
+.setup-label { display: block; font-size: 13px; font-weight: 500; color: #ededed; margin-bottom: 6px; }
+.setup-input { width: 100%; padding: 10px 12px; font-size: 14px; color: #ededed; background: #19191b; border: 1px solid rgba(237,237,237,0.16); border-radius: 8px; outline: none; }
+.setup-input:focus { border-color: rgba(237,237,237,0.32); }
+.setup-error { color: #e5484d; font-size: 13px; line-height: 1.4; margin: 10px 0 0; }
+.setup-btn { width: 100%; margin-top: 14px; padding: 12px; font-size: 15px; font-weight: 500; color: #171717; background: #ededed; border: 0; border-radius: 10px; cursor: pointer; }
+.setup-btn:active { background: #d4d4d4; }
+.setup-link { display: block; width: 100%; margin-top: 10px; padding: 8px; font-size: 13px; color: #ededed; background: transparent; border: 0; cursor: pointer; text-decoration: underline; }
