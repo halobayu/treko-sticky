@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treko Sticky</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="sticky">
+  <div class="titlebar" data-tauri-drag-region>
+    <span class="titlebar-title" data-tauri-drag-region>Treko Sticky</span>
+    <span class="titlebar-actions" data-tauri-drag-region="false">
+      <button id="btn-refresh" class="tbtn" title="Muat ulang data" aria-label="Muat ulang" data-tauri-drag-region="false">↻</button>
+      <button id="btn-settings" class="tbtn" title="Ganti Data URL" aria-label="Pengaturan" data-tauri-drag-region="false">⚙</button>
+      <button id="btn-pin" class="tbtn" title="Selalu di atas: mati (klik untuk nyalakan)" aria-label="Selalu di atas" aria-pressed="false" data-tauri-drag-region="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="3" fill="currentColor"/><path d="M12 9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 20h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <button id="btn-minimize" class="tbtn" title="Minimize" aria-label="Minimize" data-tauri-drag-region="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <button id="btn-close" class="tbtn" title="Tutup" aria-label="Tutup" data-tauri-drag-region="false">×</button>
+    </span>
+  </div>
+
+  <div id="setup-view" class="setup-card" hidden>
+    <h3>Treko Sticky</h3>
+    <label class="setup-label" for="input-url">Data URL / Username</label>
+    <input id="input-url" class="setup-input" type="text" placeholder="https://gambirstudio.com/treko/data.php?username=alyaltidak" autocomplete="off" spellcheck="false">
+    <p class="setup-error" id="setup-error" hidden></p>
+    <button id="btn-save-url" class="setup-btn">Simpan</button>
+    <button id="btn-cancel-setup" class="setup-link" hidden>Kembali</button>
+  </div>
+
+  <div id="tabs" class="tabs" hidden>
+    <button id="tab-today" class="tab active" type="button" aria-selected="true">Hari ini</button>
+    <button id="tab-week" class="tab" type="button" aria-selected="false">Minggu ini</button>
+  </div>
+
+  <div id="card-view">
+    <div id="card" class="acard">
+      <div class="acard-head" id="acard-head">
+        <h3 id="artist-name">—</h3>
+        <span class="taskcount" id="task-count">Task 0/0</span>
+      </div>
+      <div class="acard-body" id="acard-body">
+        <p class="meta" id="status">Memuat data…</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="week-view" hidden>
+    <div id="wcard" class="acard">
+      <div class="acard-head" id="wcard-head">
+        <h3 id="week-title">Minggu ini</h3>
+        <span class="taskcount" id="week-count">Selesai 0/0</span>
+      </div>
+      <div class="acard-body" id="week-body">
+        <p class="meta">Belum ada data minggu ini.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot" id="foot"></p>
+</div>
+<script src="main.js"></script>
+</body>
+</html>
