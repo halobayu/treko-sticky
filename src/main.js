@@ -1,4 +1,4 @@
-// Treko Sticky v10.5 — single build untuk semua artist, view only.
+// Treko Sticky v10.6 — single build untuk semua artist, view only.
 // Dark theme sama seperti dashboard Treko (dark), flag Since/Day/Miss
 // per task dari push (aturan hari tertutup yang sama seperti dashboard:
 // miss baru valid setelah collect sore / hari lewat), footer disederhanakan
@@ -11,13 +11,12 @@
 // v10.4: emoji status di depan nama task (12 Nov 2026, Bayu): 🕐 pending,
 // ⭐ progres melebihi target, 👍 selesai tepat waktu, ⚠️ masih jalan tapi
 // sudah miss. Tanpa emoji = masih jalan, belum selesai dan belum miss.
-// v10.5: tombol "Cek Update" (↓) di titlebar — update langsung tanpa
-// signing key (keputusan Bayu 12 Nov 2026, "tool simple gini").
-// App cek GitHub Releases terbaru (api.github.com), kalau ada versi baru
-// download installer .exe (NSIS) ke cache, jalankan, lalu tutup app.
-// TIDAK ada verifikasi signature (tanpa signing key) — update hanya dari
-// repo publik halobayu/treko-sticky; installer tetap unsigned jadi
-// SmartScreen Windows akan muncul seperti install manual.
+// v10.6: review animasi pakai skill review-animations Emil (15 Nov 2026,
+// Bayu: "scale nya kurang oke, scroll nya juga") — bar progres pakai
+// transform scaleX (GPU) + transisi 200ms ease-out, bukan width;
+// scroll kartu dipertahankan saat refresh; tombol ada feedback tekan
+// scale(0.97); render dilewati kalau data tidak berubah (scroll + bar
+// tidak ke-reset); hormati prefers-reduced-motion.
 // Pindah tab tidak fetch ulang: datanya sudah ikut di payload.
 // Cara pakai baru (usulan Bayu 3 Nov 12:38 WIB, menggantikan 1 zip per artist):
 // lead DM-kan Data URL per artist, artist tempel URL itu di app sekali saja,
@@ -109,6 +108,23 @@ function statusEmoji(t) {
   return "";
 }
 
+let lastTasksKey = "";
+// v10.6: isi transform bar dari data-* setelah DOM terpasang (double rAF
+// supaya transisi 200ms jalan — bar terisi mulus dari 0, bukan lompat).
+function animateBars(root) {
+  const setBars = () => {
+    root.querySelectorAll(".bar-prog").forEach(el => {
+      el.style.transform = `scaleX(${parseFloat(el.dataset.prog || "0")})`;
+    });
+    root.querySelectorAll(".bar-gap").forEach(el => {
+      const start = parseFloat(el.dataset.start || "0") * 100;
+      const gap = parseFloat(el.dataset.gap || "0");
+      el.style.transform = `translateX(${start}%) scaleX(${gap})`;
+    });
+  };
+  requestAnimationFrame(() => requestAnimationFrame(setBars));
+}
+
 function render(data) {
   const head = document.getElementById("acard-head");
   const nameEl = document.getElementById("artist-name");
@@ -120,6 +136,12 @@ function render(data) {
   const tasks = data.tasks || [];
   const done = tasks.filter(t => t.target != null && t.progress != null && t.progress >= t.target).length;
   countEl.textContent = `Task ${done}/${tasks.length}`;
+  // v10.6: rebuild kartu hanya kalau isi task berubah — kalau data sama,
+  // DOM dibiarkan (scroll tidak ke-reset, bar tidak animasi ulang dari 0).
+  const tasksKey = JSON.stringify(tasks);
+  if (tasksKey !== lastTasksKey) {
+    lastTasksKey = tasksKey;
+    const st = body.scrollTop;
   if (!tasks.length) {
     body.innerHTML = `<p class="meta">Belum ada task hari ini.</p>`;
   } else {
@@ -132,9 +154,9 @@ function render(data) {
       let bar = "";
       if (targ != null) {
         const gap = prog < targ ? Math.min(targ, 100) - prog : 0;
-        bar = `<div class="barrow"><div class="bar"><div class="bar-prog" style="width:${Math.min(prog, 100)}%"></div><div class="bar-gap" style="left:${Math.min(prog, 100)}%;width:${gap}%"></div></div><span class="targetpct">${targ}%</span></div>`;
+        bar = `<div class="barrow"><div class="bar"><div class="bar-prog" data-prog="${Math.min(prog, 100) / 100}"></div><div class="bar-gap" data-start="${Math.min(prog, 100) / 100}" data-gap="${gap / 100}"></div></div><span class="targetpct">${targ}%</span></div>`;
       } else {
-        bar = `<div class="barrow"><div class="bar"><div class="bar-prog" style="width:${Math.min(prog, 100)}%"></div></div></div>`;
+        bar = `<div class="barrow"><div class="bar"><div class="bar-prog" data-prog="${Math.min(prog, 100) / 100}"></div></div></div>`;
       }
       const flag = (t.since && t.age)
         ? `<p class="flagline"><span>Since : ${esc(t.since)}</span><span>${t.age} Day</span>${t.miss ? `<span class="miss">Miss ${t.miss} Day</span>` : ""}</p>`
@@ -144,6 +166,9 @@ function render(data) {
       const emo = statusEmoji(t);
       return `${pill}<div class="taskcard"><p class="tname">${emo ? emo + " " : ""}${esc(t.name)}</p>${pend}${raise}<div class="tprog">${prog}%</div>${bar}${flag}</div>`;
     }).join("");
+  }
+    body.scrollTop = st;
+    animateBars(body);
   }
   const now = new Date();
   const hhmm = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;

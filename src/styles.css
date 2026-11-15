@@ -4,12 +4,14 @@
    tetap color code penuh. View only: tidak ada tombol lead, tidak ada
    statistik tim, tidak ada kartu artist lain. */
 * { box-sizing: border-box; }
+:root { --ease-out: cubic-bezier(0.23, 1, 0.32, 1); }
 html, body { margin: 0; padding: 0; background: transparent; font-family: system-ui, Arial, sans-serif; }
 .sticky { width: 100%; margin: 0; padding: 12px; background: #19191b; border: 1px solid rgba(237,237,237,0.08); border-radius: 20px; min-height: 100vh; box-sizing: border-box; }
 .titlebar { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 10px; color: #ededed; user-select: none; }
 .titlebar-title { font-weight: 500; font-size: 15px; }
 .titlebar-actions { display: flex; gap: 6px; }
-.tbtn { width: 28px; height: 28px; border: 1px solid rgba(237,237,237,0.16); border-radius: 8px; background: transparent; color: #a1a1a6; cursor: pointer; font-size: 16px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+.tbtn { width: 28px; height: 28px; border: 1px solid rgba(237,237,237,0.16); border-radius: 8px; background: transparent; color: #a1a1a6; cursor: pointer; font-size: 16px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; transition: transform 160ms var(--ease-out); }
+.tbtn:active { transform: scale(0.97); }
 .tbtn svg { width: 16px; height: 16px; display: block; }
 .tbtn:disabled { opacity: 0.5; cursor: default; }
 .tbtn.active { background: rgba(237,237,237,0.16); border-color: rgba(237,237,237,0.32); color: #ededed; }
@@ -18,7 +20,8 @@ html, body { margin: 0; padding: 0; background: transparent; font-family: system
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .tabs { display: flex; gap: 8px; margin: 2px 0 12px; }
 .tabs[hidden] { display: none; }
-.tab { padding: 8px 16px; font-size: 14px; font-weight: 500; color: #a1a1a6; background: transparent; border: 1px solid rgba(237,237,237,0.16); border-radius: 999px; cursor: pointer; }
+.tab { padding: 8px 16px; font-size: 14px; font-weight: 500; color: #a1a1a6; background: transparent; border: 1px solid rgba(237,237,237,0.16); border-radius: 999px; cursor: pointer; transition: transform 160ms var(--ease-out); }
+.tab:active { transform: scale(0.97); }
 .tab.active { color: #171717; background: #ededed; border-color: #ededed; }
 .wgroup { margin: 16px 0 0; }
 .wgroup:first-child { margin-top: 0; }
@@ -45,8 +48,8 @@ html, body { margin: 0; padding: 0; background: transparent; font-family: system
 .taskcard .tprog { color: #ededed; font-size: 32px; font-weight: 500; line-height: 1; margin: 12px 0 8px; font-variant-numeric: tabular-nums; }
 .barrow { display: flex; align-items: center; gap: 12px; margin: 8px 0; min-width: 0; }
 .bar { flex: 1 1 auto; min-width: 0; height: 8px; background: #232325; border-radius: 4px; overflow: hidden; position: relative; }
-.bar-prog { position: absolute; left: 0; top: 0; bottom: 0; background: #4cc38a; border-radius: 4px 0 0 4px; }
-.bar-gap { position: absolute; top: 0; bottom: 0; background: #3a3a3e; border-radius: 0; }
+.bar-prog { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: #4cc38a; border-radius: 4px 0 0 4px; transform: scaleX(0); transform-origin: left; transition: transform 200ms var(--ease-out); }
+.bar-gap { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: #3a3a3e; border-radius: 0; transform: translateX(0) scaleX(0); transform-origin: left; transition: transform 200ms var(--ease-out); }
 .targetpct { font-size: 20px; font-weight: 500; color: #85858b; min-width: 64px; flex-shrink: 0; white-space: nowrap; text-align: right; line-height: 1; font-variant-numeric: tabular-nums; }
 .flagline { display: flex; gap: 16px; flex-wrap: wrap; color: #a1a1a6; font-size: 13px; margin: 12px 0 0; }
 .flagline .miss { color: #e5484d; }
@@ -60,6 +63,10 @@ html, body { margin: 0; padding: 0; background: transparent; font-family: system
 .setup-input { width: 100%; padding: 10px 12px; font-size: 14px; color: #ededed; background: #19191b; border: 1px solid rgba(237,237,237,0.16); border-radius: 8px; outline: none; }
 .setup-input:focus { border-color: rgba(237,237,237,0.32); }
 .setup-error { color: #e5484d; font-size: 13px; line-height: 1.4; margin: 10px 0 0; }
-.setup-btn { width: 100%; margin-top: 14px; padding: 12px; font-size: 15px; font-weight: 500; color: #171717; background: #ededed; border: 0; border-radius: 10px; cursor: pointer; }
-.setup-btn:active { background: #d4d4d4; }
+.setup-btn { width: 100%; margin-top: 14px; padding: 12px; font-size: 15px; font-weight: 500; color: #171717; background: #ededed; border: 0; border-radius: 10px; cursor: pointer; transition: transform 160ms var(--ease-out); }
+.setup-btn:active { background: #d4d4d4; transform: scale(0.97); }
 .setup-link { display: block; width: 100%; margin-top: 10px; padding: 8px; font-size: 13px; color: #ededed; background: transparent; border: 0; cursor: pointer; text-decoration: underline; }
+@media (prefers-reduced-motion: reduce) {
+  .tbtn.spinning { animation: none; }
+  .bar-prog, .bar-gap, .tbtn, .tab, .setup-btn { transition: none; }
+}
