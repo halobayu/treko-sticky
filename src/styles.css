@@ -5,9 +5,9 @@
    statistik tim, tidak ada kartu artist lain. */
 * { box-sizing: border-box; }
 :root { --ease-out: cubic-bezier(0.23, 1, 0.32, 1); }
-html, body { margin: 0; padding: 0; background: transparent; font-family: system-ui, Arial, sans-serif; }
-.sticky { width: 100%; margin: 0; padding: 12px; background: #19191b; border: 1px solid rgba(237,237,237,0.08); border-radius: 20px; min-height: 100vh; box-sizing: border-box; }
-.titlebar { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 10px; color: #ededed; user-select: none; }
+html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: transparent; font-family: system-ui, Arial, sans-serif; }
+.sticky { width: 100%; height: 100vh; margin: 0; padding: 12px; background: #19191b; border: 1px solid rgba(237,237,237,0.08); border-radius: 20px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
+.titlebar { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 10px; color: #ededed; user-select: none; flex-shrink: 0; }
 .titlebar-title { font-weight: 500; font-size: 15px; }
 .titlebar-actions { display: flex; gap: 6px; }
 .tbtn { width: 28px; height: 28px; border: 1px solid rgba(237,237,237,0.16); border-radius: 8px; background: transparent; color: #a1a1a6; cursor: pointer; font-size: 16px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; transition: transform 160ms var(--ease-out); }
@@ -18,7 +18,7 @@ html, body { margin: 0; padding: 0; background: transparent; font-family: system
 .tbtn.update-available { color: #4ade80; border-color: rgba(74,222,128,0.5); }
 .tbtn.spinning { animation: spin 0.8s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.tabs { display: flex; gap: 8px; margin: 2px 0 12px; }
+.tabs { display: flex; gap: 8px; margin: 2px 0 12px; flex-shrink: 0; }
 .tabs[hidden] { display: none; }
 .tab { padding: 8px 16px; font-size: 14px; font-weight: 500; color: #a1a1a6; background: transparent; border: 1px solid rgba(237,237,237,0.16); border-radius: 999px; cursor: pointer; transition: transform 160ms var(--ease-out); }
 .tab:active { transform: scale(0.97); }
@@ -33,11 +33,13 @@ html, body { margin: 0; padding: 0; background: transparent; font-family: system
 .wline.ok .wdate { color: #a1a1a6; }
 .wline.warn { color: #fbbf24; }
 .wline.warn .wdate { color: #a1a1a6; }
-.acard { background: #232325; color: #ededed; border: 1px solid rgba(237,237,237,0.08); border-radius: 16px; overflow: hidden; }
-.acard-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 20px; color: #171717; }
+#card-view, #week-view { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+#card-view[hidden], #week-view[hidden] { display: none; }
+.acard { background: #232325; color: #ededed; border: 1px solid rgba(237,237,237,0.08); border-radius: 16px; overflow: hidden; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.acard-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 20px; color: #171717; flex-shrink: 0; }
 .acard-head h3 { margin: 0; color: #171717; font-size: 28px; line-height: 1; font-weight: 500; }
 .acard-head .taskcount { font-size: 18px; font-weight: 500; color: #171717; white-space: nowrap; }
-.acard-body { padding: 16px; max-height: min(560px, calc(100vh - 190px)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: #3a3a3e transparent; }
+.acard-body { padding: 16px; flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #3a3a3e transparent; }
 .acard-body::-webkit-scrollbar { width: 8px; }
 .acard-body::-webkit-scrollbar-thumb { background: #3a3a3e; border-radius: 8px; }
 .tstamp-pill { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: #85858b; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; border-radius: 999px; padding: 4px 10px; font-size: 13px; font-weight: 500; margin: 12px 0 8px; }
@@ -56,7 +58,7 @@ html, body { margin: 0; padding: 0; background: transparent; font-family: system
 .pendingline { color: #fbbf24; font-size: 13px; font-weight: 500; margin: 8px 0 0; }
 .raiseline { color: #4ade80; font-size: 13px; font-weight: 500; margin: 8px 0 0; }
 .meta { color: #a1a1a6; font-size: 14px; margin: 8px 0; }
-.foot { color: #a1a1a6; font-size: 12px; text-align: center; margin: 12px 0 0; }
+.foot { color: #a1a1a6; font-size: 12px; text-align: center; margin: 12px 0 0; flex-shrink: 0; }
 .setup-card { background: #232325; color: #ededed; border: 1px solid rgba(237,237,237,0.08); border-radius: 16px; padding: 20px; }
 .setup-card h3 { margin: 0 0 14px; color: #ededed; font-size: 22px; font-weight: 500; }
 .setup-label { display: block; font-size: 13px; font-weight: 500; color: #ededed; margin-bottom: 6px; }
