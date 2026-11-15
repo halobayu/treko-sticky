@@ -1,6 +1,6 @@
 [package]
 name = "treko-sticky"
-version = "10.5.0"
+version = "10.6.0"
 description = "Treko Sticky — kartu task per artist, view only, tanpa always-on-top"
 authors = ["Gambir Studio"]
 edition = "2021"
