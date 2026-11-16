@@ -37,7 +37,41 @@
   <div id="card-view">
     <div id="card" class="acard">
       <div class="acard-head" id="acard-head">
-        <h3 id="artist-name">—</h3>
+        <div class="acard-head-left">
+          <div class="pet" id="pet" data-state="idle" title="Treko">
+            <svg viewBox="0 0 120 80" aria-hidden="true">
+              <!-- ekor melingkar -->
+              <path d="M34 50 C 14 50, 8 30, 22 25 C 32 22, 38 32, 30 38" fill="none" stroke="#171717" stroke-width="10" stroke-linecap="round"/>
+              <!-- badan -->
+              <ellipse cx="62" cy="50" rx="32" ry="13" fill="#171717"/>
+              <!-- kepala -->
+              <ellipse cx="94" cy="40" rx="20" ry="17" fill="#171717"/>
+              <!-- kaki -->
+              <rect x="40" y="58" width="9" height="14" rx="4" fill="#171717"/>
+              <rect x="58" y="60" width="9" height="14" rx="4" fill="#171717"/>
+              <rect x="76" y="60" width="9" height="14" rx="4" fill="#171717"/>
+              <rect x="92" y="58" width="9" height="14" rx="4" fill="#171717"/>
+              <!-- mata per state -->
+              <g class="eye eye-idle">
+                <circle cx="96" cy="38" r="10" fill="#f5d90a"/>
+                <circle cx="96" cy="38" r="5" fill="#171717"/>
+              </g>
+              <g class="eye eye-work">
+                <ellipse cx="96" cy="38" rx="10" ry="6" fill="#f5d90a"/>
+                <rect x="94" y="32" width="4" height="12" rx="2" fill="#171717"/>
+              </g>
+              <g class="eye eye-happy">
+                <path d="M86 40 Q 96 28 106 40" fill="none" stroke="#f5d90a" stroke-width="4" stroke-linecap="round"/>
+              </g>
+              <g class="eye eye-sad">
+                <circle cx="96" cy="42" r="9" fill="#f5d90a"/>
+                <circle cx="96" cy="45" r="4" fill="#171717"/>
+                <path d="M108 52 q 3 6 0 8 q -3 -2 0 -8" fill="#7fb3d5"/>
+              </g>
+            </svg>
+          </div>
+          <h3 id="artist-name">—</h3>
+        </div>
         <span class="taskcount" id="task-count">Task 0/0</span>
       </div>
       <div class="acard-body" id="acard-body">
