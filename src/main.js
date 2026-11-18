@@ -11,8 +11,9 @@
 // v10.4: emoji status di depan nama task (12 Nov 2026, Bayu): 🕐 pending,
 // ⭐ progres melebihi target, 👍 selesai tepat waktu, ⚠️ masih jalan tapi
 // sudah miss. Tanpa emoji = masih jalan, belum selesai dan belum miss.
-// v10.7: pet tokek gimmick (Bayu 16 Nov 2026) — SVG digambar dari logo
-// Treko, state dari kondisi task hari ini: idle / work / happy / sad.
+// v10.7: tombol titlebar bulat penuh + ikon SVG seragam;
+// radius kartu 8px (konsentris dgn window 20px). Pet tokek HOLD
+// (Bayu 18 Nov 2026) — kode pet di-backup, asset dibuat Bayu.
 // Scroll kartu dipertahankan saat refresh; tombol ada feedback tekan
 // scale(0.97); render dilewati kalau data tidak berubah (scroll + bar
 // tidak ke-reset); hormati prefers-reduced-motion.
@@ -108,19 +109,6 @@ function statusEmoji(t) {
 }
 
 let lastTasksKey = "";
-// Pet tokek v10.7 — state dari kondisi task hari ini:
-// sad = ada task miss (butuh perhatian); happy = semua task selesai;
-// work = ada task lagi jalan (progres > 0); idle = belum ada task /
-// belum mulai. Prioritas: sad > happy > work > idle.
-function petState(tasks) {
-  const list = tasks || [];
-  if (!list.length) return "idle";
-  if (list.some(t => t.miss)) return "sad";
-  const done = list.filter(t => t.target != null && t.progress != null && t.progress >= t.target).length;
-  if (done === list.length) return "happy";
-  if (list.some(t => t.progress != null && t.progress > 0)) return "work";
-  return "idle";
-}
 // v10.6: isi transform bar dari data-* setelah DOM terpasang (double rAF
 // supaya transisi 200ms jalan — bar terisi mulus dari 0, bukan lompat).
 function animateBars(root) {
@@ -148,8 +136,6 @@ function render(data) {
   const tasks = data.tasks || [];
   const done = tasks.filter(t => t.target != null && t.progress != null && t.progress >= t.target).length;
   countEl.textContent = `Task ${done}/${tasks.length}`;
-  const pet = document.getElementById("pet");
-  if (pet) pet.setAttribute("data-state", petState(tasks));
   // v10.6: rebuild kartu hanya kalau isi task berubah — kalau data sama,
   // DOM dibiarkan (scroll tidak ke-reset, bar tidak animasi ulang dari 0).
   const tasksKey = JSON.stringify(tasks);

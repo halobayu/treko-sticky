@@ -10,7 +10,7 @@ html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 .titlebar { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 10px; color: #ededed; user-select: none; flex-shrink: 0; }
 .titlebar-title { font-weight: 500; font-size: 15px; }
 .titlebar-actions { display: flex; gap: 6px; }
-.tbtn { width: 28px; height: 28px; border: 1px solid rgba(237,237,237,0.16); border-radius: 8px; background: transparent; color: #a1a1a6; cursor: pointer; font-size: 16px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; transition: transform 160ms var(--ease-out); }
+.tbtn { width: 28px; height: 28px; border: 1px solid rgba(237,237,237,0.16); border-radius: 50%; background: transparent; color: #a1a1a6; cursor: pointer; font-size: 16px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; transition: transform 160ms var(--ease-out); }
 .tbtn:active { transform: scale(0.97); }
 .tbtn svg { width: 16px; height: 16px; display: block; }
 .tbtn:disabled { opacity: 0.5; cursor: default; }
@@ -35,27 +35,9 @@ html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 .wline.warn .wdate { color: #a1a1a6; }
 #card-view, #week-view { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 #card-view[hidden], #week-view[hidden] { display: none; }
-.acard { background: #232325; color: #ededed; border: 1px solid rgba(237,237,237,0.08); border-radius: 16px; overflow: hidden; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.acard { background: #232325; color: #ededed; border: 1px solid rgba(237,237,237,0.08); border-radius: 8px; overflow: hidden; flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .acard-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 20px; color: #171717; flex-shrink: 0; }
 .acard-head-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
-/* Pet tokek (v10.7, gimmick): SVG digambar dari logo Treko — tokek hitam,
-   mata cincin kuning. State diganti lewat data-state di #pet. */
-.pet { width: 46px; height: 31px; flex-shrink: 0; }
-.pet svg { width: 100%; height: 100%; display: block; }
-.pet .eye { display: none; }
-.pet[data-state="idle"] .eye-idle { display: block; }
-.pet[data-state="work"] .eye-work { display: block; }
-.pet[data-state="happy"] .eye-happy { display: block; }
-.pet[data-state="sad"] .eye-sad { display: block; }
-.pet[data-state="idle"] svg { animation: petBob 3s ease-in-out infinite; }
-.pet[data-state="idle"] .eye-idle { animation: petBlink 4s infinite; transform-box: fill-box; transform-origin: center; }
-.pet[data-state="work"] svg { animation: petBob 1.2s ease-in-out infinite; }
-.pet[data-state="happy"] svg { animation: petHop 0.6s ease-in-out infinite; }
-.pet[data-state="sad"] svg { animation: petDroop 2s ease-in-out infinite; }
-@keyframes petBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
-@keyframes petBlink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
-@keyframes petHop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-@keyframes petDroop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(2px); } }
 .acard-head h3 { margin: 0; color: #171717; font-size: 28px; line-height: 1; font-weight: 500; }
 .acard-head .taskcount { font-size: 18px; font-weight: 500; color: #171717; white-space: nowrap; }
 .acard-body { padding: 16px; flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #3a3a3e transparent; }
@@ -78,7 +60,7 @@ html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 .raiseline { color: #4ade80; font-size: 13px; font-weight: 500; margin: 8px 0 0; }
 .meta { color: #a1a1a6; font-size: 14px; margin: 8px 0; }
 .foot { color: #a1a1a6; font-size: 12px; text-align: center; margin: 12px 0 0; flex-shrink: 0; }
-.setup-card { background: #232325; color: #ededed; border: 1px solid rgba(237,237,237,0.08); border-radius: 16px; padding: 20px; }
+.setup-card { background: #232325; color: #ededed; border: 1px solid rgba(237,237,237,0.08); border-radius: 8px; padding: 20px; }
 .setup-card h3 { margin: 0 0 14px; color: #ededed; font-size: 22px; font-weight: 500; }
 .setup-label { display: block; font-size: 13px; font-weight: 500; color: #ededed; margin-bottom: 6px; }
 .setup-input { width: 100%; padding: 10px 12px; font-size: 14px; color: #ededed; background: #19191b; border: 1px solid rgba(237,237,237,0.16); border-radius: 8px; outline: none; }
@@ -90,5 +72,4 @@ html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 @media (prefers-reduced-motion: reduce) {
   .tbtn.spinning { animation: none; }
   .bar-prog, .bar-gap, .tbtn, .tab, .setup-btn { transition: none; }
-  .pet svg, .pet[data-state="idle"] .eye-idle { animation: none; }
 }
