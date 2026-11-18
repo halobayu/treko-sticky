@@ -6,7 +6,7 @@
 * { box-sizing: border-box; }
 :root { --ease-out: cubic-bezier(0.23, 1, 0.32, 1); }
 html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: transparent; font-family: system-ui, Arial, sans-serif; }
-.sticky { width: 100%; height: 100vh; margin: 0; padding: 12px; background: #19191b; border-radius: 20px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
+.sticky { width: 100%; height: 100vh; margin: 0; padding: 12px; background: #19191b; border-radius: 0; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
 .titlebar { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 10px; color: #ededed; user-select: none; flex-shrink: 0; }
 .titlebar-title { font-weight: 500; font-size: 15px; }
 .titlebar-actions { display: flex; gap: 6px; }
