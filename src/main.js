@@ -1,4 +1,9 @@
-// Treko Sticky v10.7 — single build untuk semua artist, view only.
+// Treko Sticky v10.10 — single build untuk semua artist, view only.
+// v10.10: pet gecko (Bayu) — animasi GIF per state (Work/Miss/Pending/
+// Idle/Happy) di disc 72px pojok kanan header kartu Hari ini, frame
+// color per state; header gelap + garis 2px warna banner artist;
+// Tired dicoret. State dari task hari ini, prioritas Miss > Pending
+// > Happy > Work > Idle.
 // Dark theme sama seperti dashboard Treko (dark), flag Since/Day/Miss
 // per task dari push (aturan hari tertutup yang sama seperti dashboard:
 // miss baru valid setelah collect sore / hari lewat), footer disederhanakan
@@ -35,6 +40,37 @@ const URL_KEY = "treko_data_url";
 const CACHE_KEY = "treko_last_data";
 const RELEASES_API = "https://api.github.com/repos/halobayu/treko-sticky/releases/latest";
 const RELEASES_PAGE = "https://github.com/halobayu/treko-sticky/releases";
+
+// v10.10: pet gecko (Bayu) — state dari task hari ini.
+// Miss = ada task belum selesai yang miss; Pending = ada task belum
+// selesai yang pending; Happy = SEMUA task hari ini selesai (100%);
+// Work = ada progres hari ini (belum semua selesai); Idle = belum ada
+// progres hari ini. Prioritas: Miss > Pending > Happy > Work > Idle.
+// Tired dicoret (Bayu 25 Nov 2026: trigger cuma jam, sinyal lemah).
+// Frame color per state ikut mockup yang disetujui Bayu (25 Nov 2026).
+const PET_FRAMES = { work: "#ffffff", miss: "#F97316", pending: "#EF4444", idle: "#9CA3AF", happy: "#22C55E" };
+const PET_SRC = {
+  work: "assets/pet/pet-work.gif",
+  miss: "assets/pet/pet-miss.gif",
+  pending: "assets/pet/pet-pending.gif",
+  idle: "assets/pet/pet-idle.gif",
+  happy: "assets/pet/pet-happy.gif",
+};
+
+function isTaskDone(t) {
+  if (t.target != null && t.progress != null) return t.progress >= t.target;
+  return t.progress != null && t.progress >= 100;
+}
+
+function computePetState(tasks) {
+  if (!tasks || !tasks.length) return "idle";
+  const open = tasks.filter(t => !isTaskDone(t));
+  if (open.some(t => t.miss)) return "miss";
+  if (open.some(t => t.pending)) return "pending";
+  if (open.length === 0) return "happy";
+  if (tasks.some(t => (t.progress ?? 0) > 0)) return "work";
+  return "idle";
+}
 
 function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -131,11 +167,22 @@ function render(data) {
   const countEl = document.getElementById("task-count");
   const body = document.getElementById("acard-body");
   const foot = document.getElementById("foot");
-  head.style.background = data.header_color || "#EAB308";
+  const lineEl = document.getElementById("acard-head-line");
+  const petFrame = document.getElementById("petFrame");
+  const petImg = document.getElementById("petImg");
+  // v10.10: header gelap (CSS), garis pemisah pakai warna banner artist.
+  if (lineEl) lineEl.style.background = data.header_color || "#EAB308";
   nameEl.textContent = data.artist || data.username || "—";
   const tasks = data.tasks || [];
-  const done = tasks.filter(t => t.target != null && t.progress != null && t.progress >= t.target).length;
+  const done = tasks.filter(t => isTaskDone(t)).length;
   countEl.textContent = `Task ${done}/${tasks.length}`;
+  // v10.10: pet gecko — state + frame color dari task hari ini.
+  const petState = computePetState(tasks);
+  if (petImg) {
+    const src = PET_SRC[petState];
+    if (petImg.getAttribute("src") !== src) petImg.setAttribute("src", src);
+  }
+  if (petFrame) petFrame.style.background = PET_FRAMES[petState] || "#ffffff";
   // v10.6: rebuild kartu hanya kalau isi task berubah — kalau data sama,
   // DOM dibiarkan (scroll tidak ke-reset, bar tidak animasi ulang dari 0).
   const tasksKey = JSON.stringify(tasks);

@@ -40,6 +40,18 @@ html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 .acard-head-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .acard-head h3 { margin: 0; color: #171717; font-size: 28px; line-height: 1; font-weight: 500; }
 .acard-head .taskcount { font-size: 18px; font-weight: 500; color: #171717; white-space: nowrap; }
+/* v10.10: header kartu Hari ini — pet gecko (Bayu).
+   Layout ikut mockup yang disetujui: header gelap, nama + pet disc
+   di baris atas, garis 2px warna banner artist sebagai pemisah, lalu
+   Task di bawah garis, rata kiri. Week card tidak berubah (tetap
+   background banner penuh, tanpa pet). */
+#acard-head { flex-direction: column; align-items: stretch; gap: 10px; background: #232325; color: #ededed; }
+.acard-head-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+#acard-head h3 { font-size: 24px; font-weight: 700; color: #ededed; }
+#acard-head .taskcount { align-self: flex-start; font-size: 18px; font-weight: 500; color: #ededed; }
+.acard-head-line { height: 2px; background: #EAB308; flex-shrink: 0; }
+.pet-frame { width: 72px; height: 72px; border-radius: 50%; background: #ffffff; display: flex; align-items: center; justify-content: center; flex: none; }
+.pet-img { width: 72px; height: 72px; object-fit: contain; display: block; }
 .acard-body { padding: 16px; flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #3a3a3e transparent; }
 .acard-body::-webkit-scrollbar { width: 8px; }
 .acard-body::-webkit-scrollbar-thumb { background: #3a3a3e; border-radius: 8px; }
