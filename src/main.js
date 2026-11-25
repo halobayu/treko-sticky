@@ -1,5 +1,5 @@
-// Treko Sticky v10.10 — single build untuk semua artist, view only.
-// v10.10: pet gecko (Bayu) — animasi GIF per state (Work/Miss/Pending/
+// Treko Sticky v10.10.1 — single build untuk semua artist, view only.
+// v10.10.1: pet gecko (Bayu) — animasi APNG per state (Work/Miss/Pending/
 // Idle/Happy) di disc 72px pojok kanan header kartu Hari ini, frame
 // color per state; header gelap + garis 2px warna banner artist;
 // Tired dicoret. State dari task hari ini, prioritas Miss > Pending
@@ -50,11 +50,11 @@ const RELEASES_PAGE = "https://github.com/halobayu/treko-sticky/releases";
 // Frame color per state ikut mockup yang disetujui Bayu (25 Nov 2026).
 const PET_FRAMES = { work: "#ffffff", miss: "#F97316", pending: "#EF4444", idle: "#9CA3AF", happy: "#22C55E" };
 const PET_SRC = {
-  work: "assets/pet/pet-work.gif",
-  miss: "assets/pet/pet-miss.gif",
-  pending: "assets/pet/pet-pending.gif",
-  idle: "assets/pet/pet-idle.gif",
-  happy: "assets/pet/pet-happy.gif",
+  work: "assets/pet/pet-work.apng",
+  miss: "assets/pet/pet-miss.apng",
+  pending: "assets/pet/pet-pending.apng",
+  idle: "assets/pet/pet-idle.apng",
+  happy: "assets/pet/pet-happy.apng",
 };
 
 function isTaskDone(t) {
