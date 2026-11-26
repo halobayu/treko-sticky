@@ -1,4 +1,6 @@
-// Treko Sticky v10.10.1 — single build untuk semua artist, view only.
+// Treko Sticky v10.11.0 — single build untuk semua artist, view only.
+// v10.11: toggle auto-start di layar setup (default NYALA buat instalasi
+// baru; plugin tauri-plugin-autostart, Registry HKCU Run, tanpa admin).
 // v10.10.1: pet gecko (Bayu) — animasi APNG per state (Work/Miss/Pending/
 // Idle/Happy) di disc 72px pojok kanan header kartu Hari ini, frame
 // color per state; header gelap + garis 2px warna banner artist;
@@ -38,8 +40,44 @@
 const DATA_BASE = "https://gambirstudio.com/treko/data.php?username=";
 const URL_KEY = "treko_data_url";
 const CACHE_KEY = "treko_last_data";
+const AUTOSTART_KEY = "treko_autostart"; // "1" = nyala, "0" = mati (pilihan user)
 const RELEASES_API = "https://api.github.com/repos/halobayu/treko-sticky/releases/latest";
 const RELEASES_PAGE = "https://github.com/halobayu/treko-sticky/releases";
+
+// v10.11: auto-start saat Windows nyala (plugin tauri-plugin-autostart,
+// Registry HKCU Run, tanpa admin). Toggle ada di layar setup, default
+// NYALA buat instalasi baru; pilihan user disimpan di localStorage.
+// Panggil lewat window.__TAURI__.core.invoke (plugin commands:
+// plugin:autostart|enable / disable / is_enabled). Di mode web
+// (bukan Tauri) toggle disembunyikan.
+function autostartInvoke() {
+  const T = window.__TAURI__;
+  if (T && T.core && T.core.invoke) return T.core.invoke;
+  return null;
+}
+async function getAutostartEnabled() {
+  const invoke = autostartInvoke();
+  if (!invoke) return null;
+  try { return await invoke("plugin:autostart|is_enabled"); } catch (e) { return null; }
+}
+async function setAutostartEnabled(on) {
+  const invoke = autostartInvoke();
+  if (!invoke) return false;
+  try {
+    await invoke(on ? "plugin:autostart|enable" : "plugin:autostart|disable");
+    try { localStorage.setItem(AUTOSTART_KEY, on ? "1" : "0"); } catch (e) {}
+    return true;
+  } catch (e) { return false; }
+}
+// Default NYALA buat instalasi baru (belum pernah pilih): aktifkan sekali,
+// simpan pilihan. Kalau user sudah pernah pilih, hormati pilihannya.
+async function ensureAutostartDefault() {
+  let pref = null;
+  try { pref = localStorage.getItem(AUTOSTART_KEY); } catch (e) {}
+  if (pref != null) return;
+  const ok = await setAutostartEnabled(true);
+  if (!ok) { try { localStorage.setItem(AUTOSTART_KEY, "1"); } catch (e) {} }
+}
 
 // v10.10: pet gecko (Bayu) — state dari task hari ini.
 // Miss = ada task belum selesai yang miss; Pending = ada task belum
@@ -105,6 +143,18 @@ function showSetup(prefill) {
   // Tombol kembali hanya kalau sudah ada data tersimpan / pernah tampil.
   cancel.hidden = !getStoredUrl();
   setTimeout(() => { try { input.focus(); input.select(); } catch (e) {} }, 0);
+  // v10.11: toggle auto-start — tampil hanya kalau plugin tersedia
+  // (mode Tauri); state-nya dibaca dari Registry (aktual), bukan dari
+  // localStorage, supaya selalu akurat.
+  (async () => {
+    const row = document.getElementById("autostart-row");
+    const box = document.getElementById("input-autostart");
+    if (!row || !box) return;
+    const enabled = await getAutostartEnabled();
+    if (enabled == null) { row.hidden = true; return; }
+    row.hidden = false;
+    box.checked = enabled;
+  })();
 }
 
 function showCard() {
@@ -427,6 +477,13 @@ document.getElementById("btn-save-url").addEventListener("click", () => {
 document.getElementById("input-url").addEventListener("keydown", (e) => {
   if (e.key === "Enter") document.getElementById("btn-save-url").click();
 });
+// v10.11: toggle auto-start — langsung aktif/mati, tidak perlu Simpan.
+// Kalau gagal (plugin tidak tersedia), kembalikan posisi checkbox.
+document.getElementById("input-autostart").addEventListener("change", async (e) => {
+  const box = e.target;
+  const ok = await setAutostartEnabled(box.checked);
+  if (!ok) box.checked = !box.checked;
+});
 document.getElementById("btn-cancel-setup").addEventListener("click", () => {
   showCard();
   load();
@@ -473,4 +530,8 @@ document.getElementById("btn-pin").addEventListener("click", async () => {
   btn.setAttribute("aria-pressed", String(alwaysOnTop));
   btn.title = alwaysOnTop ? "Selalu di atas: nyala (klik untuk matikan)" : "Selalu di atas: mati (klik untuk nyalakan)";
 });
+
+// v10.11: default auto-start NYALA buat instalasi baru (fire-and-forget,
+// tidak menahan load). Pilihan user yang sudah tersimpan dihormati.
+ensureAutostartDefault();
 load();
