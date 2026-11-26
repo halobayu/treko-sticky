@@ -15,5 +15,5 @@
     "dev": "tauri dev",
     "tauri": "tauri"
   },
-  "version": "10.10.1"
+  "version": "10.11.0"
 }
